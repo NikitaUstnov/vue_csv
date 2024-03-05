@@ -11,7 +11,7 @@
           class="table"
           :style="[settings.data.length >= 20 ? { height: '400px' } : {}]"
         >
-          <hot-table :ref="label" :settings="settings"></hot-table>
+          <hot-table ref="refs" :settings="settings"></hot-table>
         </div>
       </AccordionTab>
     </Accordion>
@@ -33,12 +33,7 @@ registerAllModules();
 const store = useStore();
 const router = useRouter();
 
-const classes = ref(null);
-const courses = ref(null);
-const location = ref(null);
-const rosters = ref(null);
-const staff = ref(null);
-const students = ref(null);
+const refs = ref([]);
 
 const dataToRender = reactive([]);
 
@@ -58,19 +53,20 @@ const additionalSettings = {
 };
 
 const download = () => {
-  const refs = {
-    classes: classes,
-    courses: courses,
-    location: location,
-    rosters: rosters,
-    staffs: staff,
-    students: students,
-  };
+  const labels = [
+    "classes",
+    "courses",
+    "location",
+    "rosters",
+    "staffs",
+    "students",
+  ];
 
-  for (const key in refs) {
-    let plugin = refs[key].value.hasOwnProperty("hotInstance")
-      ? refs[key].value.hotInstance.getPlugin("exportFile")
-      : refs[key].value[0].hotInstance.getPlugin("exportFile");
+  for (let index = 0; index < refs.value.length; index++) {
+    const element = refs.value[index];
+    let plugin = element.hotInstance
+      ? element.hotInstance.getPlugin("exportFile")
+      : element[0].hotInstance.getPlugin("exportFile");
     plugin.downloadFile("csv", {
       bom: false,
       columnDelimiter: ",",
@@ -78,7 +74,7 @@ const download = () => {
       exportHiddenColumns: true,
       exportHiddenRows: true,
       fileExtension: "csv",
-      filename: key,
+      filename: labels[index],
       mimeType: "text/csv",
       rowDelimiter: "\r\n",
       rowHeaders: false,
