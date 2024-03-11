@@ -170,7 +170,7 @@ const generateStudents = (array) => {
   const data = array.map((raw) => {
     const person_id = "student" + raw["學號"];
     const person_number = raw["學號"];
-    const last_name = raw["姓名"].trim().at(-1);
+    const last_name = raw["姓名"].trim()[0];
     const first_name = raw["姓名"].trim().replace(last_name, "");
 
     return [
